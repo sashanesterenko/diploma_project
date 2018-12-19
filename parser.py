@@ -16,6 +16,7 @@ def get_relevant_info():
     html = get_html(url='http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=82173485', headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'})
     if html: 
         soup = bs(html, 'html.parser')
+        
         all_tr = soup.find_all('tr')
         param_value_dict = {}
         for tr in all_tr:
@@ -26,7 +27,29 @@ def get_relevant_info():
                 param_value = param_value.text
                 param_value_pair = {param:param_value}
                 param_value_dict.update(param_value_pair)
-        print(param_value_dict)
+        
+        table_body = soup.find_all('table', class_='table font9')
+        all_tbody_tr = []
+#здесь не понимаю, почему не могу просто поискать в table_body, а приходится делать через for
+        table_param_value_dict = {}
+        for tb in table_body:
+            tbody_tr = tb.find_all('tr', class_=False)
+
+        for tr in tbody_tr:
+            tbody_th = tr.find_all('th')
+            tbody_td = tr.find_all('td')
+            # if tbody_th and tbody_td:
+            #     tbody_th = tbody_th.text
+            #     tbody_td = tbody_td.text
+            print(tbody_th)
+            print(tbody_td)
+                # table_param_value_pair = {tbody_th:tbody_td}
+                # table_param_value_dict.update(table_param_value_pair)
+
+
+        # print(table_param_value_dict)
+         
+        # print(param_value_dict)
 
        
 
