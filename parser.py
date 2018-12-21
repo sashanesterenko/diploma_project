@@ -9,9 +9,6 @@ def get_html(url, headers):
     except (requests.RequestException, ValueError):
         return False
 
-# def has_class(tag):
-#     return tag.has_attr('class')
-
 def get_relevant_info():
     html = get_html(url='http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=82173485', headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'})
     if html: 
@@ -27,29 +24,25 @@ def get_relevant_info():
                 param_value = param_value.text
                 param_value_pair = {param:param_value}
                 param_value_dict.update(param_value_pair)
-        
         table_body = soup.find_all('table', class_='table font9')
-        all_tbody_tr = []
-#здесь не понимаю, почему не могу просто поискать в table_body, а приходится делать через for
-        table_param_value_dict = {}
         for tb in table_body:
-            tbody_tr = tb.find_all('tr', class_=False)
-
+            tbody_tr = tb.find_all('tr', class_=False)       
+        tbody_th = []
+        tbody_td = []      
         for tr in tbody_tr:
-            tbody_th = tr.find_all('th')
-            tbody_td = tr.find_all('td')
-            # if tbody_th and tbody_td:
-            #     tbody_th = tbody_th.text
-            #     tbody_td = tbody_td.text
-            print(tbody_th)
-            print(tbody_td)
-                # table_param_value_pair = {tbody_th:tbody_td}
-                # table_param_value_dict.update(table_param_value_pair)
+            try_th = tr.find_all('th') 
+            if try_th:
+                for every_th in try_th:
+                    tbody_th.append(every_th.text)
+            else:
+                try_td = tr.find_all('td')
+                if try_td:            
+                    for every_td in try_td:
+                        tbody_td.append(every_td.text)
 
+        table_param_value_dict = dict(zip(tbody_th, tbody_td))
+        print(table_param_value_dict)
 
-        # print(table_param_value_dict)
-         
-        # print(param_value_dict)
 
        
 
