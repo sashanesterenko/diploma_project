@@ -6,6 +6,7 @@ from openpyxl import Workbook
 from openpyxl.compat import range
 from openpyxl.utils import get_column_letter
 from openpyxl import load_workbook
+from collections import OrderedDict
 
 def get_html(url, headers):
     try:
@@ -69,12 +70,12 @@ def get_relevant_info():
         # print(table_param_value_list)
 
         needed_keys = ['Способ определения поставщика (подрядчика, исполнителя)', 
+                'Организация, осуществляющая размещение',
+                'Почтовый адрес',
                 'Адрес электронной площадки в информационно-телекоммуникационной сети «Интернет»', 
-                'Организация, осуществляющая размещение', 
-                'Почтовый адрес', 
+                'Начальная (максимальная) цена контракта',
                 'Дата и время окончания подачи заявок', 
                 'Дата проведения аукциона в электронной форме', 
-                'Начальная (максимальная) цена контракта', 
                 'Дата и время подписания печатной формы извещения (соответствует дате направления на контроль по ч.5 ст.99 Закона 44-ФЗ либо дате размещения в ЕИС, в случае отсутствия контроля, по местному времени организации, осуществляющей размещение)']
         needed_param_value_dict = {}
         for key in param_value_dict.keys():
@@ -84,7 +85,9 @@ def get_relevant_info():
                 # print(needed_param_value_dict)
             else:
                 pass
-        # print(needed_param_value_dict)
+        sorted_needed_param_value_dict = dict(sorted(needed_param_value_dict.items(), key=lambda pair:needed_keys.index(pair[0])))
+        
+        # print(sorted_needed_param_value_dict)
 
 
         needed_table_keys = {'Наименование товара, работы, услуги по КТРУ',
@@ -114,24 +117,45 @@ def get_relevant_info():
                 'Дата проведения аукциона в электронной форме', 
                 'Дата и время подписания печатной формы извещения (соответствует дате направления на контроль по ч.5 ст.99 Закона 44-ФЗ либо дате размещения в ЕИС, в случае отсутствия контроля, по местному времени организации, осуществляющей размещение)']
         column_range = [3, 4, 5, 12, 13, 14, 15, 16]
+        column_range_goods = [6, 7, 8]
         wb = load_workbook(filename='test_table.xlsx')
         sheet = wb.active
-        # print(sheet.cell(column=5, row=50))
-        first_columns_len = len(sheet['A'])
-        print(first_columns_len)
-        last_index_number = sheet.cell(column=1, row=first_columns_len).value
-        # print(last_index_number)
-        index_number = last_index_number + 1
-
+        rows_index = 0
+        for row in sheet.iter_rows(min_col=1, max_col=1):
+            for cell in row:
+                if cell.value != None:
+                    rows_index = cell.value
+        
+        index_number = rows_index + 1
         sheet.cell(column=1, row=sheet.max_row+1, value=index_number)
+        
         column_range_index = 0
-        # решить, как итерировать -- строки внутри ключей или ключи внутри строк
-        for row in wb.rows: 
-            for key in needed_table_param_value_dict.keys():
-                    if key in fields: 
-                        sheet.cell(column=column_range[column_range_index], row=ws.max_row, value=a_dict[key])
-                        column_range_index = column_range_index + 1
+        for key in sorted_needed_param_value_dict.keys():
+            if key in fields:
+                
+                try:
+                    sheet.cell(column=column_range[column_range_index], row=sheet.max_row, value=sorted_needed_param_value_dict[key])
+                    column_range_index = column_range_index + 1
+                except (IndexError, KeyError):
+                    print('1')
+                    pass
 
+        row_index = sheet.max_row
+        for a_dict in needed_table_param_value_list:
+            column_range_index = 0
+            for key in a_dict.keys():
+                if key in fields:
+                    try:
+                        sheet.cell(column=column_range_goods[column_range_index], row=row_index, value=a_dict[key])
+                        column_range_index += 1
+                    except (IndexError):
+                        pass
+            row_index +=1
+
+
+        
+
+        wb.save(filename='test_table.xlsx')
 
 
 #         with open('', 'w', encoding='utf-8') as f:
