@@ -4,3 +4,9 @@ empty_book.xlsx
 openpyxl_etudes.py
 openpyxl_tutorial.py
 test_table.xlsx
+
+
+.vscode/
+__pycache__/
+config.py
+*.db
