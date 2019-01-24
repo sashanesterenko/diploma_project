@@ -13,18 +13,32 @@ class Notice(db.Model):
     e_auction_date = db.Column(db.DateTime, nullable=False)
     date_printed_notice = db.Column(db.DateTime, nullable=False)
 
+    vendees = db.relationship('offer', backref = 'notice_author') #Это ок?
+    
+
+
+    def __repr__(self):
+            return '<Notice {} {}>'.format(self.notice_id)
+
+
 class Vendee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    notice_id = db.Column(db.Integer, nullable=False)
+    notice_id = db.Column(db.Integer, nullable=False, db.ForeignKey('notice_id')) #Это ок? Хочу, чтобы notice_id связывал все таблицы
 	postal_address = db.Column(db.Integer, nullable=False)
 	vendee = db.Column(db.String, nullable=False)
 
+    def __repr__(self):
+            return '<Vendee {} {}>'.format(self.notice_id, self.vendee)
+
 class Offer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    notice_id = db.Column(db.Integer, nullable=False)
+    notice_id = db.Column(db.Integer, nullable=False, db.ForeignKey('notice_id')) #Это ок? Хочу, чтобы notice_id связывал все таблицы
 	name = db.Column(db.Integer, nullable=False)
     quantity = = db.Column(db.Integer, nullable=False)
 	price = db.Column(db.String, nullable=False)
+
+    def __repr__(self):
+            return '<Offer {} {}>'.format(self.notice_id, self.name, self.quantity)
 
 
     
