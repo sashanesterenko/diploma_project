@@ -111,60 +111,69 @@ def get_relevant_info():
     return needed_param_value_dict, needed_table_param_value_list
 
 
-def excel_export(needed_param_value_dict, needed_table_param_value_list):
-    fields = ['Способ определения поставщика (подрядчика, исполнителя)', 
-            'Организация, осуществляющая размещение',
-            'Почтовый адрес',
-            'Наименование товара, работы, услуги по КТРУ',
-            'Количество', 
-            'Цена за ед.изм.',                
-            'Адрес электронной площадки в информационно-телекоммуникационной сети «Интернет»', 
-            'Начальная (максимальная) цена контракта', 
-            'Дата и время подписания печатной формы извещения (соответствует дате направления на контроль по ч.5 ст.99 Закона 44-ФЗ либо дате размещения в ЕИС, в случае отсутствия контроля, по местному времени организации, осуществляющей размещение)',
-            'Дата и время окончания подачи заявок', 
-            'Дата проведения аукциона в электронной форме']
-    column_range = [3, 4, 5, 12, 13, 14, 15, 16]
-    column_range_goods = [6, 7, 8]
-    wb = load_workbook(filename='test_table.xlsx')
-    sheet = wb.active
-    rows_index = 0
-    for row in sheet.iter_rows(min_col=1, max_col=1):
-        for cell in row:
-            if cell.value != None:
-                rows_index = cell.value
+# def excel_export(needed_param_value_dict, needed_table_param_value_list):
+#     fields = ['Способ определения поставщика (подрядчика, исполнителя)', 
+#             'Организация, осуществляющая размещение',
+#             'Почтовый адрес',
+#             'Наименование товара, работы, услуги по КТРУ',
+#             'Количество', 
+#             'Цена за ед.изм.',                
+#             'Адрес электронной площадки в информационно-телекоммуникационной сети «Интернет»', 
+#             'Начальная (максимальная) цена контракта', 
+#             'Дата и время подписания печатной формы извещения (соответствует дате направления на контроль по ч.5 ст.99 Закона 44-ФЗ либо дате размещения в ЕИС, в случае отсутствия контроля, по местному времени организации, осуществляющей размещение)',
+#             'Дата и время окончания подачи заявок', 
+#             'Дата проведения аукциона в электронной форме']
+#     column_range = [3, 4, 5, 12, 13, 14, 15, 16]
+#     column_range_goods = [6, 7, 8]
+#     wb = load_workbook(filename='test_table.xlsx')
+#     sheet = wb.active
+#     rows_index = 0
+#     for row in sheet.iter_rows(min_col=1, max_col=1):
+#         for cell in row:
+#             if cell.value != None:
+#                 rows_index = cell.value
         
-    index_number = rows_index + 1
-    sheet.cell(column=1, row=sheet.max_row+1, value=index_number)
+#     index_number = rows_index + 1
+#     sheet.cell(column=1, row=sheet.max_row+1, value=index_number)
         
-    column_range_index = 0
-    for key in needed_param_value_dict.keys():
-        if key in fields:
+#     column_range_index = 0
+#     for key in needed_param_value_dict.keys():
+#         if key in fields:
                 
-            try:
-                sheet.cell(column=column_range[column_range_index], row=sheet.max_row, value=needed_param_value_dict[key])
-                column_range_index = column_range_index + 1
-            except (IndexError, KeyError):
-                print('1')
-                pass
+#             try:
+#                 sheet.cell(column=column_range[column_range_index], row=sheet.max_row, value=needed_param_value_dict[key])
+#                 column_range_index = column_range_index + 1
+#             except (IndexError, KeyError):
+#                 print('1')
+#                 pass
 
-    row_index = sheet.max_row
-    for a_dict in needed_table_param_value_list:
-        column_range_index = 0
-        for key in a_dict.keys():
-            if key in fields:
-                try:
-                    sheet.cell(column=column_range_goods[column_range_index], row=row_index, value=a_dict[key])
-                    column_range_index += 1
-                except (IndexError):
-                    pass
-        row_index +=1 
+#     row_index = sheet.max_row
+#     for a_dict in needed_table_param_value_list:
+#         column_range_index = 0
+#         for key in a_dict.keys():
+#             if key in fields:
+#                 try:
+#                     sheet.cell(column=column_range_goods[column_range_index], row=row_index, value=a_dict[key])
+#                     column_range_index += 1
+#                 except (IndexError):
+#                     pass
+#         row_index +=1 
 
-    wb.save(filename='test_table.xlsx')
+#     wb.save(filename='test_table.xlsx')
 
 
 needed_param_value_dict, needed_table_param_value_list = get_relevant_info()
 
-excel_export(needed_param_value_dict, needed_table_param_value_list)
+# excel_export(needed_param_value_dict, needed_table_param_value_list)
+
+def bd_export(needed_param_value_dict, needed_table_param_value_list):
+    needed_keys_1_of_4 = ['Номер извещения',
+                'Способ определения поставщика (подрядчика, исполнителя)']
+    future_dump = {notice_id: sorted_needed_param_value_dict['Номер извещения'], 
+                vendor_definition_method: sorted_needed_param_value_dict['Способ определения поставщика (подрядчика, исполнителя)']}
+    print(future_dump)
+bd_export(needed_param_value_dict, needed_table_param_value_list)
+
 
 
 
