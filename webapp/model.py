@@ -2,13 +2,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
 class Notice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    notice_id = db.Column(db.Integer, unique=True, nullable=False)
-	vendee_definition_method = db.Column(db.Integer, nullable=False)
-	tender_system = db.Column(db.String, nullable=False)
-	start_max_price = db.Column(db.String, nullable=False)
+    zakupkigov_id = db.Column(db.Integer, unique=True, nullable=False)
+    vendee_definition_method = db.Column(db.Integer, nullable=False)
+    tender_system = db.Column(db.String, nullable=False)
+    start_max_price = db.Column(db.String, nullable=False)
     application_dates_end = db.Column(db.DateTime, nullable=False)
     e_auction_date = db.Column(db.DateTime, nullable=False)
     date_printed_notice = db.Column(db.DateTime, nullable=False)
@@ -19,10 +18,10 @@ class Notice(db.Model):
 
 class Vendee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-	postal_address = db.Column(db.Integer, nullable=False)
-	vendee = db.Column(db.String, nullable=False)
+    postal_address = db.Column(db.Integer, nullable=False)
+    vendee = db.Column(db.String, nullable=False)
 
-    notice_id = db.Column(db.Integer, nullable=False, db.ForeignKey('Notice.notice_id')) #Это ок? Хочу, чтобы notice_id связывал все таблицы
+    notice_id = db.Column(db.Integer, db.ForeignKey('Notice.id'), nullable=False,) 
     notice = db.relationship('Notice', backref=db.backref('vendees', lazy=True))
 
     def __repr__(self):
@@ -30,11 +29,11 @@ class Vendee(db.Model):
 
 class Offer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.Integer, nullable=False)
-    quantity = = db.Column(db.Integer, nullable=False)
-	price = db.Column(db.String, nullable=False)
+    name = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.String, nullable=False)
 
-    notice_id = db.Column(db.Integer, nullable=False, db.ForeignKey('Notice.notice_id')) #Это ок? Хочу, чтобы notice_id связывал все таблицы
+    notice_id = db.Column(db.Integer, db.ForeignKey('Notice.id'), nullable=False) 
     notice = db.relationship('Notice', backref=db.backref('offers', lazy=True))
 
     def __repr__(self):
@@ -65,3 +64,9 @@ class Offer(db.Model):
 #Наименование товара, работы, услуги - name
 #Количество - quantity
 #Цена за ед.изм. - price
+
+# for notice in notices:
+#     new_notice = Notice(zakupkigov_id=notice['id'], vendee_definition_method=notice['definition_method'], ...)
+#     new_notice = Notice(**notice)
+#     db.session.add(new_notice)
+#     db.session.commit()
