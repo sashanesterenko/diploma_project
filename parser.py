@@ -69,7 +69,7 @@ def parse_notice_goods(souped_html):
             #     if every_th_text != 'Характеристики товара, работы, услуги':
             #         # print(every_th_text)
             #         tbody_th.append(every_th_text)
-            print(tbody_th)
+            # print(tbody_th)
         else:
             try_td = tr.find_all('td', style=False)
             # print(try_td)
@@ -163,11 +163,30 @@ def excel_export(needed_param_value_dict, needed_table_param_value_list):
 
 
 def bd_export(needed_param_value_dict, needed_table_param_value_list):
-    needed_keys_1_of_4 = ['Номер извещения',
-                'Способ определения поставщика (подрядчика, исполнителя)']
-    future_dump = {'notice_id': needed_param_value_dict['Номер извещения'], 
-                'vendor_definition_method': needed_param_value_dict['Способ определения поставщика (подрядчика, исполнителя)']}
-    print(future_dump)
+   
+    json_export = {'zakupkigov_id': needed_param_value_dict['Номер извещения'], 
+                'vendee_definition_method': needed_param_value_dict['Способ определения поставщика (подрядчика, исполнителя)'],
+                'vendee_info': {'postal_address': needed_param_value_dict['Почтовый адрес'],
+                        'vendee': needed_param_value_dict['Организация, осуществляющая размещение'],
+                        'notice_id': needed_param_value_dict['Номер извещения']}}
+    items = []
+    for item in needed_table_param_value_list:
+        items.append({'name': item['Наименование товара, работы, услуги по КТРУ'],
+                    'quantity': item['Количество'],
+                    'price': item['Цена за ед.изм.']})
+    json_export.update({'goods': items})
+    json_export.update({'tender_system': needed_param_value_dict['Адрес электронной площадки в информационно-телекоммуникационной сети «Интернет»'], 
+                    'start_max_price': needed_param_value_dict['Начальная (максимальная) цена контракта'], 
+                    'application_dates_end': needed_param_value_dict['Дата и время окончания подачи заявок'],
+                    'e_auction_date': needed_param_value_dict['Дата проведения аукциона в электронной форме'],
+                    'date_printed_notice': needed_param_value_dict['Дата и время подписания печатной формы извещения (соответствует дате направления на контроль по ч.5 ст.99 Закона 44-ФЗ либо дате размещения в ЕИС, в случае отсутствия контроля, по местному времени организации, осуществляющей размещение)']})
+
+
+
+    
+
+    json_export = json.dumps(json_export, ensure_ascii=False)
+    return json_export
 
 
 if __name__ == '__main__':
@@ -176,9 +195,9 @@ if __name__ == '__main__':
 
     excel_export(needed_param_value_dict, needed_table_param_value_list)
 
-    bd_export(needed_param_value_dict, needed_table_param_value_list)
+    json_export = bd_export(needed_param_value_dict, needed_table_param_value_list)
 
-
+    print(json_export)
 
 
 
