@@ -9,7 +9,8 @@ from openpyxl.utils import get_column_letter
 from openpyxl import load_workbook
 from collections import OrderedDict
 
-notice_url = 'http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=83763968'
+notice_urls = ['http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=84691094', 'http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=84229268']
+json_export = []
 
 def get_html(url, headers):
     try:
@@ -110,7 +111,7 @@ def parse_notice_goods(souped_html):
 
 
 def get_relevant_info():
-    html = get_html(notice_url, {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'})
+    html = get_html(url, {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'})
     if not html:
         return
     soup = bs(html, 'html.parser')
@@ -196,19 +197,21 @@ def bd_export(needed_param_value_dict, needed_table_param_value_list):
     
 
     json_export = json.dumps(json_export, ensure_ascii=False)
+    # print(json_export)
     return json_export
 
 
 if __name__ == '__main__':
+    for url in notice_urls:
+        needed_param_value_dict, needed_table_param_value_list = get_relevant_info()
 
-    needed_param_value_dict, needed_table_param_value_list = get_relevant_info()
+        excel_export(needed_param_value_dict, needed_table_param_value_list)
 
-    excel_export(needed_param_value_dict, needed_table_param_value_list)
+        json_export_entry = bd_export(needed_param_value_dict, needed_table_param_value_list)
 
-    json_export = bd_export(needed_param_value_dict, needed_table_param_value_list)
-
+        json_export.append(json_export_entry)
+    
     print(json_export)
-
 
 
 
