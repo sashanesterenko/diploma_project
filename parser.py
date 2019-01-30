@@ -9,7 +9,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl import load_workbook
 from collections import OrderedDict
 
-notice_url = 'http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=81135264'
+notice_url = 'http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=83763968'
 
 def get_html(url, headers):
     try:
@@ -54,36 +54,44 @@ def parse_notice_info(souped_html):
 
 def parse_notice_goods(souped_html):
     table_body = souped_html.find_all('table', class_='table font9')
+    table_param_value_dict = {}
+    table_param_value_list = []
     for tb in table_body:
         tbody_tr = tb.find_all('tr', class_=False)  
         # print(tbody_tr)           
-    table_param_value_dict = {}
-    table_param_value_list = []
-    skiped_header = 'Характеристики товара, работы, услуги'
-    for tr in tbody_tr:
-        try_th = tr.find_all('th')
-        if try_th:
-            tbody_th = [every_th.text for every_th in try_th if every_th.text != skiped_header]
-            # for every_th in try_th:
-            #     every_th_text = every_th.text
-            #     if every_th_text != 'Характеристики товара, работы, услуги':
-            #         # print(every_th_text)
-            #         tbody_th.append(every_th_text)
-            # print(tbody_th)
-        else:
-            try_td = tr.find_all('td', style=False)
-            # print(try_td)
-            if try_td: 
-                tbody_td = [every_td.text for every_td in try_td if every_td.text != '']           
-                # for every_td in try_td:
-                #     every_td_text = every_td.text
-                #     # print(every_td_text)
-                #     if every_td_text != '':
-                #         tbody_td.append(every_td_text)
-                # print(tbody_td)
-                table_param_value_dict = dict(zip(tbody_th, tbody_td))
-                    # print(table_param_value_dict)
-                table_param_value_list.append(table_param_value_dict)
+    
+        skipped_header = 'Характеристики товара, работы, услуги'
+        # tbody_th = []
+        for tr in tbody_tr:
+            try_th = tr.find_all('th')
+            # print(try_th)
+            if try_th:
+                tbody_th = [every_th.text for every_th in try_th if every_th.text != skipped_header]
+                # for every_th in try_th:
+                #     every_th_text = every_th.text
+                #     if every_th_text != 'Характеристики товара, работы, услуги':
+                #         # print(every_th_text)
+                #         tbody_th.append(every_th_text)
+        # print(tbody_th)
+            # else:
+        for tb in table_body:
+            tbody_tr_for_td = tb.find_all('tr', style='border-bottom: 1px solid black;')
+            # print(tbody_tr_for_td)
+            for tr in tbody_tr_for_td:
+                try_td = tr.find_all('td', style=False)
+                # print(try_td)
+                if try_td: 
+                    tbody_td = [every_td.text for every_td in try_td if every_td.text != '']           
+                    # for every_td in try_td:
+                    #     every_td_text = every_td.text
+                    #     # print(every_td_text)
+                    #     if every_td_text != '':
+                    #         tbody_td.append(every_td_text)
+                    # print(tbody_td)
+                    table_param_value_dict = dict(zip(tbody_th, tbody_td))
+                        # print(table_param_value_dict)
+                    table_param_value_list.append(table_param_value_dict)
+    # print(table_param_value_list)
 
     needed_table_keys = {'Наименование товара, работы, услуги по КТРУ',
                         'Количество', 
@@ -171,7 +179,9 @@ def bd_export(needed_param_value_dict, needed_table_param_value_list):
                         'notice_id': needed_param_value_dict['Номер извещения']}}
     items = []
     for item in needed_table_param_value_list:
-        items.append({'name': item['Наименование товара, работы, услуги по КТРУ'],
+        # print(item)
+        if item:
+            items.append({'name': item['Наименование товара, работы, услуги по КТРУ'],
                     'quantity': item['Количество'],
                     'price': item['Цена за ед.изм.']})
     json_export.update({'goods': items})
