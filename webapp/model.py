@@ -21,8 +21,8 @@ class Vendee(db.Model):
     postal_address = db.Column(db.Integer, nullable=False)
     vendee = db.Column(db.String, nullable=False)
 
-    notice_id = db.Column(db.Integer, db.ForeignKey('Notice.id'), nullable=False,) 
-    notice = db.relationship('Notice', backref=db.backref('vendees', lazy=True))
+    notice_id = db.Column(db.Integer, db.ForeignKey('notice.id'), nullable=False,) 
+    #notice = db.relationship('Notice', backref=db.backref('vendees', lazy=True))
 
     def __repr__(self):
             return '<Vendee {} {}>'.format(self.notice_id, self.vendee)
@@ -33,8 +33,8 @@ class Offer(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.String, nullable=False)
 
-    notice_id = db.Column(db.Integer, db.ForeignKey('Notice.id'), nullable=False) 
-    notice = db.relationship('Notice', backref=db.backref('offers', lazy=True))
+    notice_id = db.Column(db.Integer, db.ForeignKey('notice.id'), nullable=False) 
+    #notice = db.relationship('Notice', backref=db.backref('offers', lazy=True))
 
     def __repr__(self):
             return '<Offer {} {}>'.format(self.notice_id, self.name, self.quantity)

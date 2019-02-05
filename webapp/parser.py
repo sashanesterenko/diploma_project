@@ -110,7 +110,7 @@ def parse_notice_goods(souped_html):
 
 
 
-def get_relevant_info():
+def get_relevant_info(url):
     html = get_html(url, {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'})
     if not html:
         return
@@ -197,13 +197,22 @@ def bd_export(needed_param_value_dict, needed_table_param_value_list):
     
 
     json_export = json.dumps(json_export, ensure_ascii=False)
-    # print(json_export)
+    #print(json_export)
     return json_export
 
+def export_to_json(notice_urls):
+    json_export_new = []
+    for url in notice_urls:
+        needed_param_value_dict, needed_table_param_value_list = get_relevant_info(url)
+
+        json_export_entry = bd_export(needed_param_value_dict, needed_table_param_value_list)
+
+        json_export_new.append(json_export_entry)
+    return   json_export_new  
 
 if __name__ == '__main__':
     for url in notice_urls:
-        needed_param_value_dict, needed_table_param_value_list = get_relevant_info()
+        needed_param_value_dict, needed_table_param_value_list = get_relevant_info(url)
 
         excel_export(needed_param_value_dict, needed_table_param_value_list)
 
@@ -212,6 +221,30 @@ if __name__ == '__main__':
         json_export.append(json_export_entry)
     
     print(json_export)
+    print(type(json_export))
+    print(len(json_export))
+
+
+
+
+
+
+
+
+# for notice in notices:
+#     new_notice = Notice(zakupkigov_id=notice['id'], vendee_definition_method=notice['definition_method'], ...)
+#     new_notice = Notice(**notice)
+#     db.session.add(new_notice)
+#     db.session.commit()
+
+#   print(news_exists)
+ #   if not news_exists:
+  #      news_news = News(title=title, url=url, published=published)
+   #     db.session.add(news_news)
+    #    db.session.commit()
+
+
+
 
 
 
