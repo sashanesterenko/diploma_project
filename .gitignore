@@ -8,5 +8,4 @@ test_table.xlsx
 
 .vscode/
 __pycache__/
-config.py
 *.db
