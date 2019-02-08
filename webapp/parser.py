@@ -8,8 +8,10 @@ from openpyxl.compat import range
 from openpyxl.utils import get_column_letter
 from openpyxl import load_workbook
 from collections import OrderedDict
+# from __init__ import notice_urls
 
-notice_urls = ['http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=84691094', 'http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=84229268']
+# print(notice_urls)
+# notice_urls = ['http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=84691094', 'http://zakupki.gov.ru/epz/order/notice/printForm/view.html?printFormId=84229268']
 json_export = []
 
 def get_html(url, headers):
@@ -210,19 +212,19 @@ def export_to_json(notice_urls):
         json_export_new.append(json_export_entry)
     return   json_export_new  
 
-if __name__ == '__main__':
-    for url in notice_urls:
-        needed_param_value_dict, needed_table_param_value_list = get_relevant_info(url)
+# # if __name__ == '__main__':
+#     for url in notice_urls:
+#         needed_param_value_dict, needed_table_param_value_list = get_relevant_info(url)
 
-        excel_export(needed_param_value_dict, needed_table_param_value_list)
+#         excel_export(needed_param_value_dict, needed_table_param_value_list)
 
-        json_export_entry = bd_export(needed_param_value_dict, needed_table_param_value_list)
+#         json_export_entry = bd_export(needed_param_value_dict, needed_table_param_value_list)
 
-        json_export.append(json_export_entry)
+#         json_export.append(json_export_entry)
     
-    print(json_export)
-    print(type(json_export))
-    print(len(json_export))
+#     print(json_export)
+#     print(type(json_export))
+#     print(len(json_export))
 
 
 
