@@ -4,7 +4,7 @@ db = SQLAlchemy()
 
 class Notice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    zakupkigov_id = db.Column(db.Integer, unique=True, nullable=False)
+    zakupkigov_id = db.Column(db.Integer, unique=False, nullable=False)
     vendee_definition_method = db.Column(db.Integer, nullable=False)
     tender_system = db.Column(db.String, nullable=False)
     start_max_price = db.Column(db.String, nullable=False)
@@ -33,11 +33,11 @@ class Offer(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.String, nullable=False)
 
-    notice_id = db.Column(db.Integer, db.ForeignKey('notice.id'), nullable=False) 
+    #notice_id = db.Column(db.Integer, db.ForeignKey('notice.id'), nullable=False) 
     #notice = db.relationship('Notice', backref=db.backref('offers', lazy=True))
 
     def __repr__(self):
-            return '<Offer {} {}>'.format(self.notice_id, self.name, self.quantity)
+            return '<Offer {} {}>'.format(self.name, self.quantity)
 
 
     
